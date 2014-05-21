@@ -1,14 +1,14 @@
 package com.gmail.collinsmith70.audio;
 
 /**
- * A {@link Playable} object is an object which has a {@link State} that
- * represents the current state of a {@link Playable}.
+ * A {@link Playable} object is one which has a {@link State} that represents
+ * its current state.
  *
- * A common analogy for this relationship is with an audio file. An audio file,
+ * <p>A good analogy for this relationship is with an audio file. An audio file,
  * once loaded, can be played or paused at will until it reaches its finished
  * state.
  *
- * @author Collin Smith <collinsmith@csupomona.edu>
+ * @author Collin Smith <strong>collinsmith@csupomona.edu</strong>
  */
 public interface Playable {
 	/**
@@ -24,26 +24,27 @@ public interface Playable {
 	 */
 	enum State {
 		/**
-		 * Represents that this {@link Playable} is still initializing
+		 * Represents the state in which resources are still initializing
 		 * (loading resources that it needs before the head can move)
 		 */
 		INITIALIZING,
 
 		/**
-		 * Represents that this {@link Playable} is in a paused state, with
-		 * the head unmoving
+		 * Represents the state in which this is paused, with the head
+		 * unmoving
 		 */
 		PAUSED,
 
 		/**
-		 * Represents that this {@link Playable} is in a playable state,
-		 * with the head moving
+		 * Represents the state in which this is playing, with the head
+		 * moving
 		 */
 		PLAYING,
 
 		/**
-		 * Represents that this {@link Playable} is in a finished state,
-		 * no longer able to move its head
+		 * Represents the state in which this is finished, and no longer
+		 * able to move its head. In this state, resources have been
+		 * released
 		 */
 		FINISHED
 	}

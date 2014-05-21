@@ -11,8 +11,10 @@ public class AudioManager {
 	private final ExecutorService POOL;
 
 	public AudioManager() {
+		// TODO: change to use a ThreadPoolExecutor, which will give more flexability
 		Preferences prefs = Preferences.systemNodeForPackage(AudioManager.class);
 		int numChannels = prefs.getInt(PREF_AUDIO_CHANNELS, DEFAULT_CHANNELS);
+		numChannels = Math.max(numChannels, 1);
 		this.POOL = Executors.newFixedThreadPool(numChannels, r -> {
 			Thread t = new Thread(r);
 			t.setName(String.format("%s Thread #%d", AudioManager.class.getSimpleName(), t.getId()));
