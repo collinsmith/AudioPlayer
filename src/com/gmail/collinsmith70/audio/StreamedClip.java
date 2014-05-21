@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.prefs.Preferences;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.LineUnavailableException;
@@ -12,7 +13,9 @@ import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class StreamedClip implements Playable, Runnable {
-	private static final int BUFFER_SIZE = 4096;
+	private static final String PREF_AUDIO_CHANNELS = "audio_buffer_size";
+	private static final int DEFAULT_BUFFER_SIZE = 1<<12; // 4KB
+	private static final int MIN_BUFFER_SIZE = 1<<10; // 1KB
 
 	private final Path PATH;
 	private final boolean PLAY_WHEN_INITIALIZED;
@@ -42,13 +45,17 @@ public class StreamedClip implements Playable, Runnable {
 			this.audioInputStream = audioInputStream;
 			this.totalLength = audioInputStream.getFrameLength() * audioInputStream.getFormat().getFrameSize();
 
+			Preferences prefs = Preferences.systemNodeForPackage(StreamedClip.class);
+			int bufferSize = prefs.getInt(PREF_AUDIO_CHANNELS, DEFAULT_BUFFER_SIZE);
+			bufferSize = Math.max(bufferSize, MIN_BUFFER_SIZE);
+
 			dataLine = AudioSystem.getSourceDataLine(audioInputStream.getFormat());
-			dataLine.open(audioInputStream.getFormat(), BUFFER_SIZE);
+			dataLine.open(audioInputStream.getFormat(), bufferSize);
 			dataLine.start();
 
 			int numRead;
 			int numWritten;
-			byte[] buffer = new byte[Math.min((int)totalLength, BUFFER_SIZE)];
+			byte[] buffer = new byte[Math.min((int)totalLength, bufferSize)];
 			audioInputStream.mark((int)totalLength);
 			state = State.PAUSED;
 			if (PLAY_WHEN_INITIALIZED) {
